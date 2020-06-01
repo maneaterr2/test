@@ -21,6 +21,14 @@
     .calc_label{
         display:block;
         margin-bottom:10px;
+        
+    }
+    .calc_label:hover{
+        display:block;
+        margin-bottom:10px;
+        cursor:pointer;
+        color:#fff;
+        background-color:#003955;
     }
     .state_dad{
         display:flex;
@@ -294,6 +302,7 @@
             }
         },
         prev_block:function(){
+            this.error = false;
             this.transition = "prev";
             this.active--;
         }
