@@ -45,7 +45,37 @@
         outline:none;
         cursor:pointer;
     }
-    .next-enter-active,.next-leave-active {
+    .action_btn{
+        padding:15px 25px;
+        color:#fff;
+        background-color:#003955;
+        font-size:30px;
+        border:none;
+        border-radius:30px;
+        outline:none;
+        cursor:pointer;
+        animation-name: action_btn;
+        animation-duration: 1s;
+        animation-fill-mode: both;
+        animation-iteration-count:infinite;
+    }
+    .action_btn:hover{
+        animation:none;
+    }
+    @keyframes action_btn {
+        0% {
+        
+        transform: scale(1);
+        }
+        50%{
+            transform: scale(1.2);
+        }
+        100% {
+        /* transform: translateY(100%); */
+            transform: scale(1);
+        }
+    } 
+    .next-enter-active,.next-leave-active,.prev-enter-active,.prev-leave-active {
     transition: all .2s ease;
     }
     .next-leave-to
@@ -56,11 +86,17 @@
     {
     transform: translateX(1000px);
     }
+    .prev-leave-to{
+    transform: translateX(100vw);
+    }
+    .prev-enter{
+    transform: translateX(-1000px);
+    }
 
   </style>
   <body>  	
 	<main id="app">
-        <transition name="next" mode="out-in">
+        <transition :name="transition" mode="out-in">
 			<template v-for="item in data">
                 <div class="calc_div" v-if="active==item.key" :key="item.key">
                     <div style="text-align:center;margin:20px auto">
@@ -68,31 +104,48 @@
                             <template v-for="n in 11">
                                 <div :class="[(n<item.key)?'state_done':'','state']"></div>
                             </template>
-                        
                         </div>
                     </div>
                     <h4>{{item.title}}</h4>
                     <h3 v-show="error" align="center" style="color:red">Вы ничего не выбрали</h3>
-                   
-                        <template v-for="(dot,index) in item.fields">
-                            <label class="calc_label">
-                                <input type="radio" :value="index" v-model="item.value">
-                                <span>{{dot}}</span>
-                            </label>
+                        <template v-if="active<3">
+                            <template v-for="(dot,index) in item.fields">
+                                <label class="calc_label">
+                                    <input type="checkbox" :value="index" v-model="item.value">
+                                    <span>{{dot}}</span>
+                                </label>
+                            </template>
                         </template>
-                   
+                        <template v-if="active>2">
+                            <template v-for="(dot,index) in item.fields">
+                                <label class="calc_label">
+                                    <input type="radio" :value="index" v-model="item.value">
+                                    <span>{{dot}}</span>
+                                </label>
+                            </template>
+                        
+                        </template>
+
                     <div style="text-align:center;margin:20px auto;position:absolute;width:100%;left:0;bottom:0">
-                        <button class="next_btn" @click="next_block">Далее</button>
+                        <button v-if="active>1"class="next_btn" @click="prev_block">Назад</button>
+                        <button v-if="active!=11"class="next_btn" @click="next_block">Далее</button>
                     </div>
-                    
-                </div>
-            </template>
-            <template>
-                <div class="calc_div" v-if="active==12">
-                    <h4 align="center">{{calculator}}</h4>
                 </div>
             </template>
 		</transition>
+            <template>
+                <div class="calc_div" v-if="active">
+                    <h2 align="center">Стоимость аккредитации</h2>
+                    <h1 align="center">{{calculator}}</h1>
+                    <div style="text-align:center;margin:20px auto;position:absolute;width:100%;left:0;bottom:0">
+                        <button class="next_btn" @click="prev_block">Назад</button>
+                    </div>
+                    <div style="text-align:center;margin:50px auto;">
+                        <button class="action_btn">Заказать</button>
+                    </div>
+
+                </div>
+            </template>
        
 	</main>
 
@@ -105,17 +158,18 @@
         return{
             active:1,
             error:false,
+            transition:"next",
             data:[
-                {key:1,title:"1.Система аккредитации:",value:"",fields:['Национальная система аккредитации (ФСА «Росаккредитация»)','Система аккредитации в области использования атомной энергии (ГК "Росатом")','Международная система аккредитации ILAC (АЦЦ «Аналитика»)']},
-                {key:2,title:"2.Интересующий тип аккредитации:",value:"",fields:['Аккредитация Органа по сертификации','Аккредитация Лаборатории','Аккредитация Органа инспекции','Другой вид аккредитации']},
-                {key:3,title:"3.Есть ли обученные специалисты с подтвержденным опытом более 3 лет",value:"",fields:['Нет','1-2','3-4','Больше 4','Нужно подобрать']},
-                {key:4,title:"4.Планируемая численность специалистов проводящих испытания в соответствии с областью аккредитации",value:"",fields:['До 5','До 10','До 30','Свыше 30']},
+                {key:1,title:"1.Система аккредитации:",value:[],fields:['Национальная система аккредитации (ФСА «Росаккредитация»)','Система аккредитации в области использования атомной энергии (ГК "Росатом")','Международная система аккредитации ILAC (АЦЦ «Аналитика»)']},
+                {key:2,title:"2.Интересующий тип аккредитации:",value:[],fields:['Аккредитация Органа по сертификации','Аккредитация Лаборатории','Аккредитация Органа инспекции','Другой вид аккредитации']},
+                {key:3,title:"3.Наличие обученных специалистов с подтвержденным опытом более 3 лет",value:"",fields:['Нет','1-2','3 и более','Нужно подобрать']},
+                {key:4,title:"4.Планируемая численность специалистов, работающих в соответствующей области аккредитации",value:"",fields:['До 5','До 10','До 30','Свыше 30']},
                 {key:5,title:"5.Количество документов, устанавливающих правила и методы исследований (испытаний), измерений",value:"",fields:['До 5','До 10','До 30','Свыше 30']},
                 {key:6,title:"6.Количество мест осуществления деятельности (филиалов лаборатории)",value:"",fields:['1','2','3','Передвижная лаборатория']},
-                {key:7,title:"7.Наличие оборудования (Оборудование должно охватывать всю область аккредитации.)",value:"",fields:['Да','Нет','Есть частично','Нужно подобрать']},
-                {key:8,title:"8.Есть ли помещение (Минимум 5-7 кв.м. на одно оборудование, комната для приема образцов, для хранения расходных материалов, для обработки результатов испытаний)",value:"",fields:['Да','Нет','Нужно подобрать']},
-                {key:9,title:"9.Выберите свой округ?",value:"",fields:['Центральный','Северо-Западный','Южный','Северо-Кавказский','Приволжский','Уральский','Сибирский','Дальневосточный']},
-                {key:10,title:"10.Была ли ранее какая-либо аккредитация? (Возможно Вы были аккредитованы в добровольной системе)",value:"",fields:['Да','Нет']},
+                {key:7,title:"7.Наличие оборудования",value:"",fields:['Есть','Нет','Требуется подбор','Оборудование не требуется']},
+                {key:8,title:"8.Наличие помещений",value:"",fields:['Есть','Нет','Нужно подобрать']},
+                {key:9,title:"9.Выберите свой округ",value:"",fields:['Центральный','Северо-Западный','Южный','Северо-Кавказский','Приволжский','Уральский','Сибирский','Дальневосточный']},
+                {key:10,title:"10.Была ли ранее какая-либо аккредитация? (Возможно Вы были аккредитованы в добровольной системе)",value:"",fields:['Да','Нет','Другое']},
                 {key:11,title:"11. Как срочно вы планируете приступить к аккредитации",value:"",fields:['В течение 2 недель','В течение месяца','В течение 3 месяцев','В течение 1 год другое']},
             ]
         }
@@ -124,14 +178,14 @@
         calculator(){
             let error = false;
             this.data.forEach(function(elem,index){
-                if(elem.value===""){
+                if(elem.value===""||elem.value.length==0){
                     error = "Не указаны параметры в блоке "+(index+1);
                 }
             })
             if(error){
                 return error;
             }else{
-                return "Стоимость аккредитации "+this.magik()+" 000 Рублей";
+                return this.magik()+" 000 Рублей";
             }
         }
     },
@@ -150,21 +204,30 @@
                 k10:0,
                 k11:0
             }
-            if(this.data[1].value===0||this.data[1].value===2){
+            if(this.data[0].value.length>1){
+                obj.k1 = 350 + ((this.data[0].value.length - 1)*200);
+            }
+            if(this.data[1].value.length>1){
+                if(this.data[1].value.filter(e=>e===0||e===2).length!=0){
+                    obj.k2 = 50 + ((this.data[1].value.length - 1)*200);
+                }else{
+                    obj.k2 = 200;
+                }
+            }else if(this.data[1].value[0]===0||this.data[1].value[0]===2){
                 obj.k2 = 50;
             }
+            
             switch (this.data[2].value) {
                 case 0: obj.k3 = 10;break;     
                 case 2: obj.k3 = -5;break;   
-                case 3: obj.k3 = -10;break;   
-                case 4: obj.k3 = 20;break; 
+                case 3: obj.k3 = 20;break; 
                 default: obj.k3 = 0;break; 
             }
             //пункт 4
             switch (this.data[3].value) {
                 case 1: obj.k4 = 15;break;     
-                case 2: obj.k4 = 20;break;   
-                case 3: obj.k4 = 30;break; 
+                case 2: obj.k4 = 30;break;   
+                case 3: obj.k4 = 50;break; 
                 default: obj.k4 = 0;break; 
             }
             //пункт 5 
@@ -184,7 +247,7 @@
             //пункт 7
             switch (this.data[6].value) {
                 case 1: obj.k7 = 10;break;  
-                case 3: obj.k7 = 25;break; 
+                case 2: obj.k7 = 25;break; 
                 default: obj.k7 = 0;break; 
             }
             //пункт 8
@@ -222,12 +285,17 @@
 
         },
         next_block:function(){
-            if(this.data.find(e=>e.key==this.active).value===""){
+            if(this.data.find(e=>e.key==this.active).value===""||this.data.find(e=>e.key==this.active).value.length==0){
                 this.error = true;
             }else{
                 this.error = false;
+                this.transition = "next";
                 this.active++;
             }
+        },
+        prev_block:function(){
+            this.transition = "prev";
+            this.active--;
         }
     }
 });
