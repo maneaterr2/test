@@ -488,9 +488,9 @@
 
         },
         text_for_email:function(val){
-            
+            let str = "N/A";
                 if(this.data[val].value.length==1){
-                    return this.data[val].fields[this.data[val].value[0]]
+                    str = this.data[val].fields[this.data[val].value[0]]
                 }else if(this.data[val].value.length>1){
                     let text = "";
                     this.data[val].value.forEach((elem,index)=>{
@@ -500,10 +500,11 @@
                             text +=" и "+this.data[val].fields[this.data[val].value[index]]
                         }
                     })
-                    return text;
-                }else{
-                    return "N/A"
+                    str = text;
                 }
+            var newstr = str.replace(/\s\*\*/, '');
+            return newstr;
+
            
         }
     }
