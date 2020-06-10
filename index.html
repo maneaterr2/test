@@ -10,7 +10,7 @@
   <style>
     .calc_div{
         width: calc(100% - 30px);
-        max-width:800px;
+        max-width:900px;
         border-radius:6px;
         box-shadow: 3px 0px 25px rgba(0, 0, 0, 0.25);
         margin:20px auto;
@@ -93,8 +93,8 @@
         display:block;
     }
     .calc_form{
-        width:74%;
-        margin:10px 10%;
+        width:calc(100% - 20px);
+        margin:10px 0;
         border-radius: 6px;
         border:none;
         outline:none;
@@ -139,14 +139,37 @@
     /* transform: translateX(-1000px); */
     transform: scale(0.8);
     }
+    .calc_h4{
+        font-size:20px;
+        text-align:center;
+        margin:40px;
+    }
+    .calc_btn{
+        /* width:306px; */
+        height:53px;
+        background:-webkit-gradient(linear,left bottom,left top,from(#f6d30c),to(#ffe937));
+        background:-webkit-linear-gradient(bottom,#f6d30c 0,#ffe937 100%);
+        background:linear-gradient(360deg,#f6d30c 0,#ffe937 100%);
+        border-radius:6px;
+        border:none;
+        box-shadow:0 4px 0 0 #e7ae01;
+        font-size:20px;
+        text-transform:uppercase;
+        font-family:pnb;
+        margin-top:20px;
+        width:100%
+    }
+    .calculator_summ{
+        text-align: center;
+        font-size: 70px;
+        line-height:110px;
+    }
 
 
   </style>
   <body>  	
-		<div id="calculator" style="padding-top:40px">
-        
-            <div class="calc_div">
-            <div class="podzag2">Предварительный расчёт аккредитации</div>
+	<main id="app">
+        <div class="calc_div">
             <div style="margin:20px auto;width:100%;border-radius:6px;height: 10px;background-color: #ccc;position:relative">
                 <div :style="{'border-radius':progress_border,'height':'10px','background':'#003955','width':progress_width/10+'%'}">
                 </div>
@@ -192,7 +215,6 @@
                                                     
                             </template>
                             
-                            <div v-if="active==2||active==3||active==4||active==5||active==6||active==7||active==8||active==10" style="padding-top: 10px;">* Базовый комплект</div>
                     </div>
                 </template>
                 <div v-if="active==13">  
@@ -222,30 +244,29 @@
                             <input type="text" class="calc_form" name="name" v-model="name" placeholder="Ваше имя *">
                             <input type="text" class="calc_form" name="email" v-model="email" placeholder="Ваш e-mail *">
                             <input type="text" class="calc_form" name="phone" v-model="phone" placeholder="Ваш телефон *">
-                            <button class="calc_btn" >ОТПРАВИТЬ</button>
+                            <button class="calc_btn">ОТПРАВИТЬ</button>
                         </div>
                     </div>
 
                 </div>
             </transition>
+
             <div style="width:100%;height:60px"></div>
             <div style="text-align:center;margin:20px auto;position:absolute;width:100%;left:0;bottom:0">
                 <button v-if="active>1&&active<13"class="next_btn" @click="prev_block">Назад</button>
                 <button v-if="active!=13"class="next_btn" @click="next_block">Далее</button>
             </div>
-            </div>
-        
-            <template>
-            </template>
+        </div>
+           
        
-</div>
+	</main>
 
   </body>
   <script src="vue.min.js"></script>
   <script>
      
     const app = new Vue({
-    el: '#calculator',
+    el: '#app',
     data(){
         return{
             active:1,
@@ -253,19 +274,22 @@
             transition:"next",
             progress_width:0,
             progress_border:"6px 0 0 6px",
+            name:"",
+            phone:"",
+            email:"",
             data:[
-                {key:1,title:"1.Система аккредитации:",value:[],fields:['Национальная система аккредитации (ФСА «Росаккредитация»)','Система аккредитации в области использования атомной энергии (ГК "Росатом")','Международная система аккредитации ILAC (АЦЦ «Аналитика»)']},
-                {key:2,title:"2.Интересующий тип аккредитации:",value:[],fields:['Аккредитация Органа по сертификации','Аккредитация Лаборатории (испытательного центра) **','Аккредитация Органа инспекции','Другой вид аккредитации']},
-                {key:3,title:"3.Наличие обученных специалистов с подтвержденным опытом более 3 лет",value:"",fields:['Нет','1-2 **','3 и более','Нужно подобрать']},
-                {key:4,title:"4.Планируемая численность специалистов, работающих в соответствующей области аккредитации",value:"",fields:['До 5 **','До 10','До 30','Свыше 30']},
-                {key:5,title:"5.Количество документов, устанавливающих правила и методы исследований (испытаний), измерений",value:"",fields:['До 5 **','До 10','До 30','Свыше 30']},
-                {key:6,title:"6.Количество мест осуществления деятельности (филиалов лаборатории)",value:"",fields:['1 **','2','3','Передвижная лаборатория']},
-                {key:7,title:"7.Наличие оборудования",value:"",fields:['Есть **','Нет','Требуется подбор','Оборудование не требуется']},
-                {key:8,title:"8.Наличие помещений",value:"",fields:['Есть **','Нет','Нужно подобрать']},
-                {key:9,title:"9.Выберите свой округ",value:"",fields:['Центральный**','Северо-Западный**','Южный','Северо-Кавказский','Приволжский','Уральский','Сибирский','Дальневосточный']},
-                {key:10,title:"10.Количество желаемых выездных аудитов",value:"",fields:['1 **','2','3','Удалённый формат']},
+                {key:1,title:"1.Система аккредитации(возможно несколько вариантов):",value:[],fields:['Национальная система аккредитации (ФСА «Росаккредитация»)','Система аккредитации в области использования атомной энергии (ГК "Росатом")','Международная система аккредитации ILAC (АЦЦ «Аналитика»)']},
+                {key:2,title:"2.Интересующий тип аккредитации(возможно несколько вариантов):",value:[],fields:['Аккредитация Органа по сертификации','Аккредитация Лаборатории (испытательного центра) ','Аккредитация Органа инспекции','Другой вид аккредитации']},
+                {key:3,title:"3.Наличие обученных специалистов с подтвержденным опытом более 3 лет",value:"",fields:['Нет','1-2 ','3 и более','Нужно подобрать']},
+                {key:4,title:"4.Планируемая численность специалистов, работающих в соответствующей области аккредитации",value:"",fields:['До 5 ','До 10','До 30','Свыше 30']},
+                {key:5,title:"5.Количество документов, устанавливающих правила и методы исследований (испытаний), измерений",value:"",fields:['До 5 ','До 10','До 30','Свыше 30']},
+                {key:6,title:"6.Количество мест осуществления деятельности (филиалов лаборатории)",value:"",fields:['1 ','2','3','Передвижная лаборатория']},
+                {key:7,title:"7.Наличие оборудования",value:"",fields:['Есть ','Нет','Требуется подбор','Оборудование не требуется']},
+                {key:8,title:"8.Наличие помещений",value:"",fields:['Есть ','Нет','Нужно подобрать']},
+                {key:9,title:"9.Выберите свой округ",value:"",fields:['Центральный','Северо-Западный','Южный','Северо-Кавказский','Приволжский','Уральский','Сибирский','Дальневосточный']},
+                {key:10,title:"10.Количество желаемых выездных аудитов",value:"",fields:['1 ','2','3','Удалённый формат']},
                 {key:11,title:"11.Была ли ранее какая-либо аккредитация? (Возможно Вы были аккредитованы в добровольной системе)",value:"",fields:['Да','Нет']},
-                {key:12,title:"12. Как срочно вы планируете приступить к аккредитации",value:"",fields:['В течение 2 недель **','В течение месяца **','В течение 3 месяцев **','В течение 1 год другое **']},
+                {key:12,title:"12. Как срочно вы планируете приступить к аккредитации",value:"",fields:['В течение 2 недель','В течение месяца','В течение 3 месяцев','В течение 1 год другое']},
             ]
         }
     },
@@ -442,26 +466,6 @@
             }
 
         },
-        text_for_email:function(val){
-            let str = "N/A";
-                if(this.data[val].value.length==1){
-                    str = this.data[val].fields[this.data[val].value[0]]
-                }else if(this.data[val].value.length>1){
-                    let text = "";
-                    this.data[val].value.forEach((elem,index)=>{
-                        if(index===0){
-                            text = this.data[val].fields[this.data[val].value[index]]
-                        }else{
-                            text +=" и "+this.data[val].fields[this.data[val].value[index]]
-                        }
-                    })
-                    str = text;
-                }
-            var newstr = str.replace(/\s\*\*/, '');
-            return newstr;
-
-           
-        }
     }
 });
 
